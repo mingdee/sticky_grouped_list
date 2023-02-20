@@ -133,6 +133,11 @@ class StickyGroupedListView<T, E> extends StatefulWidget {
   /// Index of an item to initially align within the viewport.
   final int initialScrollIndex;
 
+  /// Non Stick Header
+  ///
+  /// Set it when non sticky header is desired
+  final bool nonStickyHeader;
+
   /// Determines where the leading edge of the item at [initialScrollIndex]
   /// should be placed.
   final double initialAlignment;
@@ -166,6 +171,7 @@ class StickyGroupedListView<T, E> extends StatefulWidget {
     this.initialAlignment = 0,
     this.initialScrollIndex = 0,
     this.shrinkWrap = false,
+    this.nonStickyHeader = false,
   }) : assert(itemBuilder != null || indexedItemBuilder != null);
 
   @override
@@ -259,7 +265,7 @@ class StickyGroupedListViewState<T, E>
 
             if (index == hiddenIndex) {
               return Opacity(
-                opacity: 0,
+                opacity: widget.nonStickyHeader ? 1 : 0,
                 child:
                     widget.groupSeparatorBuilder(sortedElements[actualIndex]),
               );
@@ -357,7 +363,8 @@ class StickyGroupedListViewState<T, E>
   }
 
   Widget _showFixedGroupHeader(int index) {
-    if (widget.elements.isNotEmpty) {
+    _groupHeaderKey = null;
+    if (!widget.nonStickyHeader && widget.elements.isNotEmpty) {
       _groupHeaderKey = GlobalKey();
       return Container(
         key: _groupHeaderKey,
