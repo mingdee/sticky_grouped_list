@@ -52,6 +52,9 @@ class StickyGroupedListView<T, E> extends StatefulWidget {
   /// element.
   final dynamic Function(T element)? elementIdentifier;
 
+  /// Called to inform header changed
+  final void Function(T element, int index)? onHeaderChanged;
+
   /// Whether the sorting of the list is ascending or descending.
   ///
   /// Defaults to ASC.
@@ -172,6 +175,7 @@ class StickyGroupedListView<T, E> extends StatefulWidget {
     this.initialScrollIndex = 0,
     this.shrinkWrap = false,
     this.nonStickyHeader = false,
+    this.onHeaderChanged,
   }) : assert(itemBuilder != null || indexedItemBuilder != null);
 
   @override
@@ -328,6 +332,11 @@ class StickyGroupedListViewState<T, E>
       if (prev != curr) {
         _topElementIndex = index;
         _streamController.add(_topElementIndex);
+        Future.delayed(const Duration(), () {
+          if (widget.onHeaderChanged != null) {
+            widget.onHeaderChanged!(sortedElements[index], index);
+          }
+        });
       }
     }
   }
